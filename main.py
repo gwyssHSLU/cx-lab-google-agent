@@ -10,13 +10,18 @@ from email.message import EmailMessage
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+import os
 
 # --- Google Calendar Setup ---
 SCOPES = [
     'https://www.googleapis.com/auth/calendar',
     'https://www.googleapis.com/auth/gmail.send'
 ]
-SERVICE_ACCOUNT_FILE = 'credentials.json'
+
+if os.path.exists('secrets/credentials.json'):
+    SERVICE_ACCOUNT_FILE = 'secrets/credentials.json'
+else:
+    SERVICE_ACCOUNT_FILE = 'credentials.json'
 
 def get_gmail_service():
     creds = service_account.Credentials.from_service_account_file(
@@ -136,7 +141,8 @@ def send_invitation_email(request: SendEmailRequest):
     try:
         # Hier eure echten Daten eintragen:
         SENDER_EMAIL = "rochecxlab@gmail.com"
-        APP_PASSWORD = "ewrd qsrn imnn chqo" # Ohne Leerzeichen!
+        # Liest das Passwort aus der Cloud-Konfiguration oder nutzt das lokale zum Testen
+        APP_PASSWORD = os.getenv("GMAIL_APP_PASSWORD")
 
         # 1. Die E-Mail aufbauen
         msg = MIMEMultipart()
